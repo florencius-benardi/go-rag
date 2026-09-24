@@ -1,0 +1,53 @@
+# Project metadata
+APP_NAME := "Go RAG"
+MAIN_FILE := "./cmd/rag"
+BIN_DIR := bin
+BUILD_FILE := $(BIN_DIR)/$(APP_NAME)
+
+# Env (optional)
+GO_ENV ?= development
+
+# Default command
+.DEFAULT_GOAL := help
+
+APP_NAME_WEB="Go RAG"
+
+# === BASIC GOLANG TASKS ===
+
+run: ## Run the Go app
+	@echo "Running $(APP_NAME)..."
+	go run $(MAIN_FILE)
+
+air: ## Run Go app with air
+	@echo "Running $(APP_NAME) with air ..."
+	air -c .air.toml
+
+build: ## Build the Go app + update helpers
+	@echo "Building $(APP_NAME)..."
+	go build -tags prod -o $(BUILD_FILE).exe $(MAIN_FILE)
+
+build-staging: ## Build with embedded .env.staging + update helpers
+	@echo "Building $(APP_NAME) [STAGING]..."
+	go build -tags staging -o $(BUILD_FILE)-staging.exe $(MAIN_FILE)
+	
+clean: ## Remove binaries
+	@echo "Cleaning up..."
+	rm -rfv $(BIN_DIR)
+
+test: ## Run Go tests
+	@echo "Running tests..."
+	go test ./...
+
+lint: ## Run go fmt and vet
+	go fmt ./cmd/...
+	go vet ./cmd/...
+
+mod: ## Download go modules
+	go mod tidy
+
+help: ## Show help
+	@echo ""
+	@echo "Available commands:"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' Makefile | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[32m%-20s\033[0m %s\n", $$1, $$2}'
+	@echo ""
+

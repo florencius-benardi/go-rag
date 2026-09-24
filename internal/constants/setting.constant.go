@@ -1,0 +1,12 @@
+package constants
+
+const (
+	TYPE_SETTING_UPLOAD   string = "UPLOAD IMAGE"
+	TYPE_SETTING_URL      string = "URL"
+	TYPE_SETTING_HIDDEN   string = "HIDDEN"
+	TYPE_SETTING_TEXT     string = "TEXT"
+	TYPE_SETTING_STRING   string = "STRING"
+	TYPE_SETTING_IMAGE    string = "IMAGE"
+	TYPE_SETTING_DATETIME string = "DATETIME"
+	TYPE_SETTING_INTEGER  string = "INTEGER"
+)

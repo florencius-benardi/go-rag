@@ -1,0 +1,7 @@
+.env
+.env.*
+/.claude
+/tmp
+/.gocache
+/storages
+*_test.go
