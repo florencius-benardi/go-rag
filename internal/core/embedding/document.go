@@ -10,7 +10,7 @@ import (
 	"golang.org/x/net/html/atom"
 )
 
-// Document keeps one narrative field and its structured product metadata.
+// Document keeps a product narrative and its structured metadata.
 type Document struct {
 	PageContent string
 	Metadata    map[string]any
@@ -64,30 +64,26 @@ func documentsForCatalog(p catalog) []Document {
 	intro := optionalText(p.Intro)
 	description := optionalText(p.Description)
 	duplicateNarrative := intro != "" && intro == description
-	var documents []Document
-	for _, section := range []struct{ field, label, content string }{
-		{"intro", "Ringkasan", intro},
-		{"description", "Deskripsi", description},
-	} {
-		if section.content == "" || (duplicateNarrative && section.field == "intro") {
-			continue
-		}
-		header := "Produk: " + optionalText(p.Title)
-		if len(names) > 0 {
-			header += "\nKategori: " + strings.Join(names, ", ")
-		}
-		header += "\nBagian: " + section.label + "\n\n"
-		copyMetadata := make(map[string]any, len(metadata)+1)
-		for key, value := range metadata {
-			copyMetadata[key] = value
-		}
-		copyMetadata["field"] = section.field
-		if duplicateNarrative {
-			copyMetadata["covered_fields"] = []string{"intro", "description"}
-		}
-		documents = append(documents, Document{PageContent: section.content, Metadata: copyMetadata, Field: section.field, Header: header})
+	if intro == "" && description == "" {
+		return nil
 	}
-	return documents
+	field, label, content := "description", "Deskripsi", description
+	if description == "" {
+		field, label, content = "intro", "Ringkasan", intro
+	} else if intro != "" && !duplicateNarrative {
+		label = "Ringkasan dan Deskripsi"
+		content = "Ringkasan:\n" + intro + "\n\nDeskripsi:\n" + description
+	}
+	header := "Produk: " + optionalText(p.Title)
+	if len(names) > 0 {
+		header += "\nKategori: " + strings.Join(names, ", ")
+	}
+	header += "\nBagian: " + label + "\n\n"
+	metadata["field"] = field
+	if intro != "" && description != "" {
+		metadata["covered_fields"] = []string{"intro", "description"}
+	}
+	return []Document{{PageContent: content, Metadata: metadata, Field: field, Header: header}}
 }
 
 func optionalText(value *string) string {

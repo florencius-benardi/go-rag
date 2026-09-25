@@ -18,6 +18,7 @@ import (
 	"path/filepath"
 	"strings"
 	"syscall"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
@@ -197,7 +198,15 @@ func (app *App) setupRouter(svcContainer *services.ServiceContainer) *gin.Engine
 			c.JSON(http.StatusServiceUnavailable, gin.H{"error": "LLM provider is not configured"})
 			return
 		}
-		graph := rag.NewGraph(rag.NewStore(app.db, embedder, app.cfg.Embedding.Model), model)
+		model.WithRetryLogger(func(attempt int, wait time.Duration, err error) {
+			app.log.Warn().Int("attempt", attempt).Dur("wait", wait).Err(err).Msg("LLM call retried")
+		})
+		rules, err := rag.LoadGuardrails(filepath.Join("docs", "guardrails"))
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "guardrails could not be read"})
+			return
+		}
+		graph := rag.NewGraph(rag.NewStore(app.db, embedder, app.cfg.Embedding.Model, app.cfg.Merchant.ID), model).WithGuardrails(rules)
 		state, err := graph.Run(c.Request.Context(), input.ConversationID, input.Message)
 		if err != nil {
 			app.log.Error().Err(err).Str("request_id", state.RequestID).Msg("RAG workflow failed")

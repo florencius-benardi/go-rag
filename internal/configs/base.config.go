@@ -17,6 +17,7 @@ type Config struct {
 	Session   SessionConfig
 	Embedding EmbeddingRAGConfig
 	LLM       LLMConfig
+	Merchant  MerchantConfig
 	Dev       DevConfig
 }
 
@@ -71,6 +72,10 @@ type LLMConfig struct {
 	BaseURL string
 	APIKey  string
 	Model   string
+}
+
+type MerchantConfig struct {
+	ID int32
 }
 
 type DatabaseConfig struct {
@@ -218,6 +223,9 @@ func Load() (*Config, error) {
 			BaseURL: strings.TrimRight(os.Getenv("LLM_BASE_URL"), "/"),
 			APIKey:  os.Getenv("LLM_API_KEY"),
 			Model:   os.Getenv("LLM_MODEL"),
+		},
+		Merchant: MerchantConfig{
+			ID: int32(GetEnvAsInt("MERCHANT_ID", 0)),
 		},
 		// Session: SessionConfig{
 		// 	Name:     os.Getenv("SESSION_NAME"),

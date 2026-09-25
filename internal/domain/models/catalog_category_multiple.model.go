@@ -8,8 +8,8 @@ type CatalogCategoriesMultiple struct {
 	CatalogID    *int32 `gorm:"column:catalog_id" json:"catalog_id"`
 	CategoriesID *int32 `gorm:"column:categories_id" json:"categories_id"`
 
-	Catalog  *Catalogs           `gorm:"foreignKey:CatalogID;references:ID" json:"catalog,omitempty"`
-	Category *CatalogCategories  `gorm:"foreignKey:CategoriesID;references:ID" json:"category,omitempty"`
+	Catalog  *Catalogs          `gorm:"foreignKey:CatalogID;references:ID" json:"catalog,omitempty"`
+	Category *CatalogCategories `gorm:"foreignKey:CategoriesID;references:ID" json:"category,omitempty"`
 }
 
 func (CatalogCategoriesMultiple) TableName() string {

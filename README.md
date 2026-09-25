@@ -108,7 +108,11 @@ go run ./cmd/rag embed-catalogs
 
 Perintah ini pinter — kalau cuma harga/timestamp yang berubah, dia nggak akan panggil ulang API embedding (`embedded=0`), cuma update metadata. Baru re-embed beneran kalau `intro`/`description`-nya berubah. Mau lihat log detailnya? Set `EMBEDDING_SYNC_DEBUG=true` di `.env`.
 
+Knowledge tambahan (`.md`, `.txt`, `.pdf`, `.docx`, `.xlsx`, `.csv`) diletakkan di `docs/knowledge/`, lalu jalankan `go run ./cmd/rag embed-docs`. Aturan chatbot yang dapat dikelola maintainer diletakkan sebagai Markdown di `docs/guardrails/`; lihat `docs/guardrails/waiter.md` untuk format aturan yang dieksekusi aplikasi. Jalankan perintah dari root proyek.
+
 ### 5. Coba chat-nya
+
+Dari terminal, jalankan `go run ./cmd/rag chat`. CLI membuat dan menampilkan `session_id` UUIDv7, lalu menyimpan setiap pertanyaan dan jawaban dalam session tersebut. Ketik `/exit` untuk keluar. Untuk melanjutkan riwayat yang sama pada proses berikutnya, gunakan `go run ./cmd/rag chat --session-id <UUIDv7>`. CLI membaca seluruh riwayat session sebelum setiap pertanyaan dikirim ke LLM.
 
 ```bash
 curl -X POST http://127.0.0.1:8080/api/rag/chat \

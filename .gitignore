@@ -4,4 +4,6 @@
 /tmp
 /.gocache
 /storages
-*_test.go
+/docs/*
+!/docs/guardrails/
+!/docs/rag.md

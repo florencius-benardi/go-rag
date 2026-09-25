@@ -27,6 +27,8 @@ type Engine struct {
 
 type SyncResult struct {
 	Products        int
+	Documents       int
+	Skipped         int
 	Chunks          int
 	Embedded        int
 	MetadataUpdated int

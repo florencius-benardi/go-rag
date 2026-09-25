@@ -20,8 +20,17 @@ func main() {
 		os.Exit(1)
 	}
 
-	if len(os.Args) > 1 && os.Args[1] == "embed-catalogs" {
-		err = runEmbedCatalogs(cfg)
+	if len(os.Args) > 1 {
+		switch os.Args[1] {
+		case "embed-catalogs":
+			err = runEmbedCatalogs(cfg)
+		case "embed-docs":
+			err = runEmbedDocs(cfg, os.Args[2:])
+		case "chat":
+			err = runChatCLI(cfg, os.Args[2:], os.Stdin, os.Stdout)
+		default:
+			err = fmt.Errorf("unknown command %q (use chat, embed-catalogs, or embed-docs)", os.Args[1])
+		}
 	} else {
 		err = run(cfg)
 	}
